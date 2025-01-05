@@ -1,9 +1,18 @@
 # Data Driven StockAnalysis 
 
-The Stock Performance Dashboard aims to provide a comprehensive visualization and analysis of the Nifty 50 stocks' performance over the past year. 
+  The Stock Performance Dashboard aims to provide a comprehensive visualization and analysis of the Nifty 50 stocks' performance over the past year. 
 The project will analyze daily stock data, including open, close, high, low, and volume values. 
 Clean and process the data, generate key performance insights, and visualize the top-performing stocks in terms of price changes, as well as average stock metrics.
 The solution will offer interactive dashboards using Streamlit and Power BI to help Investors, analysts, and enthusiasts make informed decisions based on the stock performance trends.
+
+APPROACH:
+
+Data Extraction and Transformation:
+    Data is provided in YAML format, organized by months.
+Within each month's folder, there are date-wise data entries.
+The task is to extract this data from the YAML file and transform it into a CSV format, organized by symbols 
+This will result in 50 CSV files after the extraction process, one for each symbol or data category
+
 
 PREVIEW OF VISUALIZATION USING STREAMLIT AND POWER BI:
 
