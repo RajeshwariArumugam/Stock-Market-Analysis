@@ -3,8 +3,8 @@ import yaml
 import pandas as pd
 
 # Define the root directory containing the month-wise folders
-root_dir = r"D:\pro_2"
-output_dir = r"D:\pro_2\csv_files"
+root_dir = r"PathOfInputFile"
+output_dir = r"PathOfOutputFile"
 os.makedirs(output_dir, exist_ok=True)
 
 # Dictionary to store data by Ticker (symbol)
