@@ -77,7 +77,7 @@ menu = ["Home", "Stock Analysis!"]
 choice = st.sidebar.radio("Choose a page:", menu)
 
 # Lottie local
-lottie_animation = load_lottie_local(r"C:\Users\Raji\Downloads\Animation - 1736013810429.json")
+lottie_animation = load_lottie_local(r"C:\Users\Raji\Downloads\Animation - 1736013810429.json") #Rrplace it with the animation link 
 
 if choice == "Home":
     # Home Page with Animation
