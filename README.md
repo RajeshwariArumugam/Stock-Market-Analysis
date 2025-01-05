@@ -17,6 +17,7 @@ PREVIEW OF VISUALIZATION USING STREAMLIT AND POWER BI:
 ![Screenshot 2025-01-04 230432](https://github.com/user-attachments/assets/4a7ce134-de41-45db-bd1d-fe591f7d1271)
 
 
+
 Results:
 A fully functional dashboard showing the top-performing and worst-performing stocks over the last year.
 Insights on the overall market with clear indicators of stock performance trends.
