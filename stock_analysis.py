@@ -3,36 +3,28 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Load Data Function
 @st.cache_data
 def load_data(uploaded_file):
     return pd.read_csv(uploaded_file)
-
-# Calculate Daily Returns
+    
 @st.cache_data
 def calculate_daily_returns(data):
     data['daily_return'] = data.groupby('ticker')['close'].pct_change()
     return data
 
-# Calculate Cumulative Returns
 @st.cache_data
 def calculate_cumulative_returns(data):
     data['cumulative_return'] = (1 + data['daily_return']).groupby(data['ticker']).cumprod()
     return data
 
-# Calculate Yearly Returns
 @st.cache_data
 def calculate_yearly_returns(data):
     """Calculate yearly returns for each stock."""
-    # Ensure data is sorted by date for each ticker
     data = data.sort_values(by=['ticker', 'date'])
 
-    # Calculate yearly return: (last_close - first_close) / first_close
+    # yearly return: (last_close - first_close) / first_close
     data['yearly_return'] = data.groupby('ticker')['close'].transform(lambda x: (x.iloc[-1] - x.iloc[0]) / x.iloc[0])
-
-    # Drop any NaN values that might have been introduced due to missing data
     data = data.dropna(subset=['yearly_return'])
-
     return data
 
 # Streamlit app
@@ -40,7 +32,6 @@ import streamlit as st
 import requests
 import json
 
-# Function to load Lottie animations
 def load_lottie_local(filepath: str):
     with open(filepath, "r") as file:
         return json.load(file)
@@ -48,42 +39,15 @@ def load_lottie_local(filepath: str):
 # Streamlit App Configuration
 st.set_page_config(page_title="StockScape Explorer", layout="wide")
 st.title("📈 StockScape Explorer")
-st.markdown("""
-    <style>
-        .css-1d391kg {  /* Sidebar container */
-            display: none;
-        }
-        .css-18e3th9 { /* Main container */
-            padding-top: 50px;
-        }
-        .top-right {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-        }
-        .top-right select {
-            background-color: #f1f1f1;
-            border-radius: 4px;
-            padding: 8px;
-            font-size: 14px;
-            cursor: pointer;
-        }
-    </style>
-""", unsafe_allow_html=True)
-# Sidebar Menu
 st.sidebar.header("Navigate")
-
 menu = ["Home", "Stock Analysis!"]
 choice = st.sidebar.radio("Choose a page:", menu)
 
-# Lottie local
 lottie_animation = load_lottie_local(r"C:\Users\Raji\Downloads\Animation - 1736013810429.json")
 
 if choice == "Home":
-    # Home Page with Animation
     st.header("Welcome to StockScape Explorer! 📊")
     st.subheader("Discover, Analyze, and Track Stocks in Real-Time")
-    # Two-column layout for text and animation
     col1, col2 = st.columns(2)
     with col1:
         st.markdown(""" 
@@ -103,27 +67,19 @@ if choice == "Home":
 
 elif choice == "Stock Analysis!":
     st.title("Stock Data Analysis and Visualization")
-    # Upload CSV file
     uploaded_file = st.file_uploader("Upload Stock Data CSV", type="csv")
     if uploaded_file is not None:
-        # Load data
         data = load_data(uploaded_file)
-        data.columns = data.columns.str.lower()  # Normalize column names to lowercase
-
-        # Display file preview
+        data.columns = data.columns.str.lower()  
+       
         st.write("Uploaded file preview:")
         st.dataframe(data.head())
-
-        # Check required columns
         required_columns = {'ticker', 'close', 'date'}
         if not required_columns.issubset(data.columns):
             st.error(f"The uploaded file must contain the following columns: {required_columns}")
             st.stop()
 
-        # Convert date column to datetime
         data['date'] = pd.to_datetime(data['date'])
-
-        # Calculate yearly returns
         data = calculate_yearly_returns(data)
 
         # Analysis and Visualizations
@@ -232,50 +188,35 @@ elif choice == "Stock Analysis!":
 
         st.subheader("Sector-wise Performance")
 
-    # Upload sector mapping file
         sector_file = st.file_uploader("Upload Sector Mapping CSV", type="csv")
         if sector_file is not None:
-    # Load sector data
             sector_data = pd.read_csv(sector_file)
-
-    # Normalize column names to lowercase for consistency
             sector_data.columns = sector_data.columns.str.lower()
 
     # Display sector data preview
             #st.write("Sector Mapping Preview:")
             #st.dataframe(sector_data.head())
-
-    # Check if sector data contains required columns
             required_sector_columns = {'company', 'sector', 'symbol'}
             if not required_sector_columns.issubset(sector_data.columns):
                 st.error(f"Sector mapping file must contain the following columns: {required_sector_columns}")
                 st.stop()
 
-    # Rename columns for merging purposes
             if 'company' in sector_data.columns:
                 sector_data = sector_data.rename(columns={'company': 'ticker'})
             elif 'symbol' in sector_data.columns:
                 sector_data = sector_data.rename(columns={'symbol': 'ticker'})
-
-    # Check for duplicate column names
             if sector_data.columns.duplicated().any():
                 st.error("The sector mapping file has duplicate column names. Please ensure the file is correct.")
                 st.stop()
-
-    # Remove duplicate rows with the same ticker
+                
             sector_data = sector_data.drop_duplicates(subset=['ticker'])
 
-    # Assuming `data` contains stock data with columns 'ticker' and 'yearly_return'
     # This dataset should already be loaded or fetched elsewhere in the app
             try:
                 merged_data = data.merge(sector_data[['ticker', 'sector']], on='ticker', how='left')
             except NameError:
                 st.error("Stock data is missing. Please ensure the stock data is loaded before merging.")
                 st.stop()
-
-    # Check if merge was successful
-            #st.write("Merged Data Preview:")
-            #st.dataframe(merged_data.head())
 
     # Calculate average yearly return per sector
             sector_performance = (
